@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CapKom Wizard</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE-edge,chrome=1" />
+
+    <script type="text/javascript" src="lib/jquery/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="lib/vie/jquery.rdfquery.debug.js"></script>
+    <script type="text/javascript" src="lib/underscore/underscore-min.js"></script>
+    <script type="text/javascript" src="lib/backbone/backbone.js"></script>
+    <script type="text/javascript" src="lib/json-serialization.js"></script>
+    <script type="text/javascript" src="lib/vie/vie-latest.debug.js"></script>
+    <script type="text/javascript" src="lib/coffee-script.js"></script>
+    <script type="text/javascript" src="http://client.lmf.googlecode.com/hg/lmf-client-js/lmf-0.0.1.js"></script>
+
+    <script type="text/coffeescript" src="lmfservice.coffee"></script>
+
+    <script type="text/coffeescript">
+        resUri = 'http://example.com/abcd'
+        v = new VIE
+        v.use new v.LMFService
+            lmfUri: 'http://localhost:8080/LMF'
+        v.load
+            uri: resUri
+        .using('lmf')
+        .execute()
+        .success (res) ->
+            console.info 'lmfservice.load success:', res
+
+        ###
+        infobox = jQuery('#elementid').infobox
+            vie: v
+            config: someConfigObj
+            uri: resUri
+
+        infobox.infobox 'option', 'uri', anotherUri
+        ###
+
+        ###
+        c = new LMFClient 'http://localhost:8080/LMF'
+        client = c.resourceClient
+        console.info client
+        client.createResource resUri, (res) ->
+            #resUri = res
+            console.log res
+            resObj = {}
+            resObj[resUri] = 
+                'rdfs:label': [
+                    value: 'Hallo'
+                    lang: 'de'
+                    type: 'literal'
+                ]
+            client.updateResourceMetadata resUri,
+                resObj
+                # update success
+                , ->
+                    console.info 'update success'
+                    client.getResourceMetadata resUri, (res) ->
+                        # get metadata success
+                        console.info resUri, res
+                        client.deleteResource resUri, ->
+                            console.info 'delete successful'
+                        , (err) ->
+                            console.info err
+                    # get metadata err
+                    , (err) ->
+                        console.info err
+                # update metadata err
+                , (err) ->
+                    console.info err
+        ###
+    </script>
+
+</head>
+<body>
+</body>
+</html>
